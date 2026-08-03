@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>आकाशवाणी · Akashvani</title>
+<meta name="theme-color" content="#090a1c">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500&family=EB+Garamond:ital@0;1&family=Rozha+One&family=Tiro+Devanagari+Hindi&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#D9AE5A;--goldb:#F0C674;--saf:#F2933C;--ivory:#F4ECD8;--muted:#B9A98C}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;color:var(--ivory);
+font-family:'EB Garamond',serif;text-align:center;
+background:radial-gradient(900px 600px at 50% -10%,#2a1c4a,rgba(42,28,74,0) 60%),linear-gradient(180deg,#090a1c,#0d0b22 45%,#070512)}
+.wrap{max-width:560px;margin:0 auto;padding:34px 20px 60px}
+h1{font-family:'Rozha One','Tiro Devanagari Hindi',serif;font-size:54px;margin:6px 0 0;color:var(--goldb);text-shadow:0 0 26px rgba(240,198,116,.35)}
+.latin{font-family:'Cinzel',serif;letter-spacing:.4em;font-size:13px;color:var(--gold);margin-left:.4em}
+.tag{font-style:italic;color:#e7dcc4cc;margin:14px 0 22px}
+.ring{width:150px;height:150px;margin:6px auto 4px;border-radius:50%;
+border:1px solid rgba(217,174,90,.5);position:relative;
+box-shadow:inset 0 0 30px rgba(242,147,60,.15),0 0 30px rgba(242,147,60,.1);animation:spin 24s linear infinite}
+.ring:before{content:"";position:absolute;inset:16px;border-radius:50%;border:1px solid rgba(217,174,90,.25)}
+.ring:after{content:"";position:absolute;top:50%;left:50%;width:12px;height:12px;margin:-6px;border-radius:50%;
+background:var(--goldb);box-shadow:0 0 16px var(--goldb)}
+.ring.on{animation-duration:5s}
+@keyframes spin{to{transform:rotate(360deg)}}
+.langs{display:flex;gap:8px;justify-content:center;margin:6px 0 20px;flex-wrap:wrap}
+button{font-family:'EB Garamond',serif;cursor:pointer}
+.lang{font-size:16px;padding:7px 16px;background:rgba(240,198,116,.04);color:var(--muted);
+border:1px solid rgba(217,174,90,.3);border-radius:2px}
+.lang.sel{color:#090a1c;background:linear-gradient(180deg,var(--goldb),var(--gold));border-color:var(--goldb)}
+label{display:block;text-align:left;font-family:'Cinzel',serif;font-size:11px;letter-spacing:.12em;
+text-transform:uppercase;color:var(--gold);margin:14px 0 6px}
+input,textarea{width:100%;font-family:'EB Garamond',serif;font-size:17px;color:var(--ivory);
+background:rgba(20,16,43,.55);border:1px solid rgba(217,174,90,.26);border-radius:2px;padding:11px 13px;outline:none}
+input:focus,textarea:focus{border-color:rgba(240,198,116,.7)}
+input[type=date],input[type=time]{color-scheme:dark}
+.cta{width:100%;margin-top:18px;font-family:'Cinzel',serif;letter-spacing:.14em;text-transform:uppercase;
+font-size:13px;color:#090a1c;background:linear-gradient(180deg,#F6D089,var(--gold));border:none;
+padding:15px;border-radius:2px;box-shadow:0 8px 30px rgba(242,147,60,.25)}
+.foot{font-style:italic;font-size:13px;color:#9a8c72aa;margin-top:20px}
+.sec{text-align:left;padding:16px 0;border-bottom:1px solid rgba(217,174,90,.14);opacity:0;
+transform:translateY(12px);transition:.8s}
+.sec.in{opacity:1;transform:none}
+.sec b{font-family:'Cinzel',serif;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:7px}
+.sec p{font-size:19px;line-height:1.7;font-style:italic;margin:0;color:#f0e7d3}
+.err{color:#f0b48a;background:rgba(193,68,14,.12);border:1px solid rgba(193,68,14,.4);padding:11px;border-radius:2px;margin-top:14px}
+.hide{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ⬇⬇⬇  PASTE YOUR RENDER URL BETWEEN THE QUOTES BELOW  ⬇⬇⬇ -->
+  <script>const SERVER = "PASTE_YOUR_RENDER_URL_HERE";</script>
+  <!-- example: const SERVER = "https://akashvani-backend.onrender.com"; -->
+
+  <div id="ringEl" class="ring"></div>
+  <h1>आकाशवाणी</h1>
+  <div class="latin">AKASHVANI</div>
+
+  <div id="home">
+    <p class="tag">The Voice from the Cosmos speaks.</p>
+    <div class="langs">
+      <button class="lang sel" data-l="hi">हिन्दी</button>
+      <button class="lang" data-l="mr">मराठी</button>
+      <button class="lang" data-l="en">English</button>
+    </div>
+    <label id="lbName">आपका नाम</label><input id="name">
+    <label id="lbDob">जन्म तिथि</label><input id="dob" type="date">
+    <label id="lbTob">जन्म समय</label><input id="tob" type="time">
+    <label id="lbPlace">जन्म स्थान</label><input id="place">
+    <label id="lbQ">आपका प्रश्न</label><input id="q">
+    <button class="cta" id="go">वाणी का आह्वान करें</button>
+    <div id="err" class="err hide"></div>
+    <div class="foot" id="foot">चिंतन और प्रकाश हेतु।</div>
+  </div>
+
+  <div id="load" class="hide"><p class="tag" id="loadTxt">वाणी अवतरित हो रही है…</p></div>
+
+  <div id="out" class="hide"></div>
+</div>
+
+<script>
+var LANG="hi";
+var T={
+ hi:{name:"आपका नाम",dob:"जन्म तिथि",tob:"जन्म समय",place:"जन्म स्थान",q:"आपका प्रश्न",go:"वाणी का आह्वान करें",
+  foot:"चिंतन और प्रकाश हेतु।",load:"वाणी अवतरित हो रही है…",hear:"🔊 वाणी सुनें",again:"पुनः पूछें",
+  need:"कृपया नाम और जन्म तिथि भरें।",err:"आकाश मौन हो गया। पुनः प्रयास करें।",
+  L:{invocation:"आह्वान",past:"बीता मार्ग",present:"यह क्षण",future:"आगे का मार्ग",blessing:"आशीर्वाद"}},
+ mr:{name:"तुमचे नाव",dob:"जन्म तारीख",tob:"जन्म वेळ",place:"जन्म स्थळ",q:"तुमचा प्रश्न",go:"वाणीचे आवाहन करा",
+  foot:"चिंतन आणि प्रकाशासाठी.",load:"वाणी अवतरत आहे…",hear:"🔊 वाणी ऐका",again:"पुन्हा विचारा",
+  need:"कृपया नाव आणि जन्म तारीख भरा.",err:"आकाश मौन झाले. पुन्हा प्रयत्न करा.",
+  L:{invocation:"आवाहन",past:"मागचा मार्ग",present:"हा क्षण",future:"पुढचा मार्ग",blessing:"आशीर्वाद"}},
+ en:{name:"Your name",dob:"Date of birth",tob:"Time of birth",place:"Place of birth",q:"Your question",go:"Summon the Voice",
+  foot:"For reflection and light.",load:"The Voice descends…",hear:"🔊 Hear the Voice",again:"Ask Again",
+  need:"Please enter your name and date of birth.",err:"The ether grew silent. Please try again.",
+  L:{invocation:"Invocation",past:"The Path Behind",present:"This Moment",future:"The Path Ahead",blessing:"Blessing"}}
+};
+function setLang(l){LANG=l;var t=T[l];
+ document.querySelectorAll(".lang").forEach(function(b){b.classList.toggle("sel",b.dataset.l===l)});
+ lbName.textContent=t.name;lbDob.textContent=t.dob;lbTob.textContent=t.tob;lbPlace.textContent=t.place;
+ lbQ.textContent=t.q;go.textContent=t.go;foot.textContent=t.foot;loadTxt.textContent=t.load;}
+document.querySelectorAll(".lang").forEach(function(b){b.onclick=function(){setLang(b.dataset.l)}});
+
+function speak(txt){try{if(!("speechSynthesis"in window))return;speechSynthesis.cancel();
+ var u=new SpeechSynthesisUtterance(txt);u.lang={hi:"hi-IN",mr:"mr-IN",en:"en-IN"}[LANG];u.rate=.9;u.pitch=.92;
+ var v=(speechSynthesis.getVoices()||[]).find(function(x){return x.lang&&x.lang.toLowerCase().indexOf(LANG)===0});
+ if(v)u.voice=v;speechSynthesis.speak(u);}catch(e){}}
+
+go.onclick=async function(){
+ var t=T[LANG];err.classList.add("hide");
+ var name=document.getElementById("name").value.trim();
+ var dob=document.getElementById("dob").value;
+ if(!name||!dob){err.textContent=t.need;err.classList.remove("hide");return;}
+ if(!SERVER||SERVER.indexOf("PASTE")===0){err.textContent="Set your server URL at the top of the file.";err.classList.remove("hide");return;}
+ home.classList.add("hide");out.classList.add("hide");load.classList.remove("hide");ringEl.classList.add("on");
+ var body={name:name,dob:dob,tob:document.getElementById("tob").value,place:document.getElementById("place").value,
+  question:document.getElementById("q").value,about:"",sign:"",lang:LANG};
+ try{
+  var r=await fetch(SERVER.replace(/\/$/,"")+"/reading",{method:"POST",
+   headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+  var d=await r.json();
+  if(!r.ok||d.error){throw 0;}
+  showReading(d,name);
+ }catch(e){load.classList.add("hide");ringEl.classList.remove("on");home.classList.remove("hide");
+  err.textContent=t.err;err.classList.remove("hide");}
+};
+
+function showReading(d,name){
+ var t=T[LANG];load.classList.add("hide");ringEl.classList.remove("on");
+ var order=["invocation","past","present","future","blessing"];
+ var html='<h2 style="font-family:\'Rozha One\',serif;color:var(--goldb);font-size:28px;margin:2px 0 4px">'+name+'</h2>';
+ order.forEach(function(k){if(d[k])html+='<div class="sec"><b>'+t.L[k]+'</b><p>'+d[k]+'</p></div>';});
+ html+='<button class="cta" id="hear">'+t.hear+'</button>';
+ html+='<button class="lang" id="again" style="width:100%;margin-top:10px">'+t.again+'</button>';
+ html+='<div class="foot">'+t.foot+'</div>';
+ out.innerHTML=html;out.classList.remove("hide");
+ var secs=out.querySelectorAll(".sec"),i=0;
+ var iv=setInterval(function(){if(secs[i])secs[i].classList.add("in");i++;if(i>=secs.length)clearInterval(iv);},1000);
+ var narration=order.map(function(k){return d[k]||""}).join(". ");
+ speak(narration);
+ document.getElementById("hear").onclick=function(){speak(narration)};
+ document.getElementById("again").onclick=function(){speechSynthesis&&speechSynthesis.cancel();
+  out.classList.add("hide");home.classList.remove("hide");};
+}
+setLang("hi");
+</script>
+</body>
+</html>
