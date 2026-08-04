@@ -84,10 +84,7 @@ async function speak(txt,onDone){
   say(MSG.thinking);
   var r=await fetch(SERVER+"/speak",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({text:txt,lang:LANG})});
   if(r.ok){var b=await r.blob();player.src=URL.createObjectURL(b);player.onended=done;
-   var p=player.play();
-   if(p&&p.then){p.then(function(){mood("speaking");say(MSG.speaking);}).catch(function(){pendingPlay=true;mood("ready");say(MSG.tapHear);});}
-   else{mood("speaking");say(MSG.speaking);}
-   return;}
+   pendingPlay=true;mood("ready");say(MSG.tapHear);return;}
  }catch(e){}
  try{mood("speaking");say(MSG.speaking);var u=new SpeechSynthesisUtterance(txt);u.lang="hi-IN";u.rate=.9;u.pitch=.92;u.onend=done;speechSynthesis.speak(u);}catch(e){setTimeout(done,300);}
 }
