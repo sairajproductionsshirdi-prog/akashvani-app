@@ -16,7 +16,6 @@ display:flex;flex-direction:column}
 flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center}
 h1{font-family:'Rozha One','Tiro Devanagari Hindi',serif;font-size:50px;margin:6px 0 0;color:var(--goldb);text-shadow:0 0 24px rgba(240,198,116,.35)}
 .latin{font-family:'Cinzel',serif;letter-spacing:.4em;font-size:12px;color:var(--gold);margin-left:.4em}
-/* the living orb — the whole interface */
 .orb{width:240px;height:240px;margin:34px auto 14px;border-radius:50%;position:relative;cursor:pointer;
 background:radial-gradient(circle at 50% 45%, rgba(242,147,60,.30), rgba(20,16,43,0) 62%);
 display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent}
@@ -43,9 +42,7 @@ color:var(--gold);cursor:pointer;border-bottom:1px solid rgba(217,174,90,.4);pad
 <body>
 <div class="wrap">
 
-  <!-- अपना Render URL नीचे quotes के बीच लिखें -->
   <script>const SERVER = "https://akashvani-backend-5lqe.onrender.com";</script>
-  <!-- उदाहरण: const SERVER = "https://akashvani-backend.onrender.com"; -->
 
   <h1>आकाशवाणी</h1>
   <div class="latin">AKASHVANI</div>
@@ -83,7 +80,6 @@ var orb=$("orb");
 function mood(m){orb.className="orb"+(m?(" "+m):"");}
 function say(s){$("status").textContent=s;}
 
-/* ---- Voice OUT ---- */
 var currentAudio=null;
 function stopAudio(){try{if(currentAudio){currentAudio.onended=null;currentAudio.pause();currentAudio=null;}if("speechSynthesis"in window)speechSynthesis.cancel();}catch(e){}}
 async function speak(txt,onDone){
@@ -102,7 +98,6 @@ async function speak(txt,onDone){
  }catch(e){setTimeout(done,300);}
 }
 
-/* ---- Conversation ---- */
 async function turn(userText,isStart){
  if(!SERVER||SERVER.indexOf("PASTE")===0){say(MSG.noUrl);mood("idle");return;}
  if(!isStart){if(!userText||!userText.trim())return;history.push({role:"user",content:userText.trim()});}
@@ -118,7 +113,6 @@ async function turn(userText,isStart){
  }catch(e){say(MSG.err);mood("idle");}
 }
 
-/* ---- Voice IN ---- */
 var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
 var rec=null;
 if(SR){rec=new SR();rec.interimResults=true;rec.maxAlternatives=1;
@@ -138,10 +132,8 @@ function listen(){
  catch(e){listening=false;}
 }
 
-/* unlock sound on first touch */
 function unlock(){try{var a=new Audio("data:audio/mp3;base64,//uQxAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAACcQCA");a.play().catch(function(){});}catch(e){}}
 
-/* the orb is the whole interface */
 orb.onclick=function(){
  if(!started){started=true;unlock();$("controls").style.display="flex";turn(null,true);return;}
  if(listening){try{rec.stop();}catch(e){}return;}
