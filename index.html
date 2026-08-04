@@ -5,15 +5,14 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>आकाशवाणी · Akashvani</title>
 <meta name="theme-color" content="#090a1c">
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500&family=EB+Garamond:ital@0;1&family=Rozha+One&family=Tiro+Devanagari+Hindi&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500&family=Rozha+One&family=Tiro+Devanagari+Hindi&display=swap" rel="stylesheet">
 <style>
-:root{--gold:#D9AE5A;--goldb:#F0C674;--saf:#F2933C;--ivory:#F4ECD8;--muted:#B9A98C}
+:root{--gold:#D9AE5A;--goldb:#F0C674;--saf:#F2933C;--ivory:#F4ECD8}
 *{box-sizing:border-box}html,body{margin:0;height:100%}
-body{min-height:100vh;color:var(--ivory);font-family:'Tiro Devanagari Hindi','EB Garamond',serif;text-align:center;
+body{min-height:100vh;color:var(--ivory);font-family:'Tiro Devanagari Hindi',serif;text-align:center;
 background:radial-gradient(900px 600px at 50% -10%,#2a1c4a,rgba(42,28,74,0) 60%),linear-gradient(180deg,#090a1c,#0d0b22 45%,#070512);background-attachment:fixed;
 display:flex;flex-direction:column}
-.wrap{max-width:560px;margin:0 auto;width:100%;padding:40px 22px calc(40px + env(safe-area-inset-bottom));
-flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.wrap{max-width:560px;margin:0 auto;width:100%;padding:40px 22px;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center}
 h1{font-family:'Rozha One','Tiro Devanagari Hindi',serif;font-size:50px;margin:6px 0 0;color:var(--goldb);text-shadow:0 0 24px rgba(240,198,116,.35)}
 .latin{font-family:'Cinzel',serif;letter-spacing:.4em;font-size:12px;color:var(--gold);margin-left:.4em}
 .orb{width:240px;height:240px;margin:34px auto 14px;border-radius:50%;position:relative;cursor:pointer;
@@ -34,15 +33,14 @@ display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-col
 #status{min-height:28px;font-size:20px;color:var(--goldb);margin:10px 0 2px}
 #sub{min-height:20px;font-size:15px;color:#cbb98f99;margin-bottom:6px}
 .row{display:flex;gap:18px;justify-content:center;margin-top:16px}
-.txtbtn{font-family:'Tiro Devanagari Hindi',serif;font-size:15px;background:none;border:none;
-color:var(--gold);cursor:pointer;border-bottom:1px solid rgba(217,174,90,.4);padding:2px 2px}
+.txtbtn{font-family:'Tiro Devanagari Hindi',serif;font-size:15px;background:none;border:none;color:var(--gold);cursor:pointer;border-bottom:1px solid rgba(217,174,90,.4)}
 .foot{font-size:12px;color:#9a8c72aa;margin-top:20px}
 </style>
 </head>
 <body>
 <div class="wrap">
 
-<script>const SERVER = "https://akashvani-backend-5lqe.onrender.com";</script>
+  <script>const SERVER = "https://akashvani-backend-5lqe.onrender.com";</script>
 
   <h1>आकाशवाणी</h1>
   <div class="latin">AKASHVANI</div>
@@ -65,46 +63,35 @@ color:var(--gold);cursor:pointer;border-bottom:1px solid rgba(217,174,90,.4);pad
 
 <script>
 var LANG="hi", history=[], lastAnswer="", started=false, listening=false;
-var MSG={
- idle:"प्रारंभ करने के लिए स्पर्श करें",
- listening:"सुन रहा हूँ… बोलिए",
- speaking:"वाणी बोल रही है…",
- thinking:"विचार कर रहा हूँ…",
- tapSpeak:"बोलने के लिए वृत्त को स्पर्श करें",
- err:"क्षमा करें Prasad Sir, संपर्क नहीं हो पाया। वृत्त को पुनः स्पर्श करें।",
- noUrl:"पहले फ़ाइल में सर्वर URL लिखें।",
- noMic:"इस ब्राउज़र में आवाज़ उपलब्ध नहीं — कृपया Chrome में खोलें।"
-};
+var MSG={idle:"प्रारंभ करने के लिए स्पर्श करें",listening:"सुन रहा हूँ… बोलिए",speaking:"वाणी बोल रही है…",
+ thinking:"विचार कर रहा हूँ…",tapSpeak:"बोलने के लिए वृत्त को स्पर्श करें",
+ err:"क्षमा करें Prasad Sir, संपर्क नहीं हो पाया। वृत्त को पुनः स्पर्श करें।",noMic:"आवाज़ उपलब्ध नहीं — Chrome में खोलें।"};
 function $(id){return document.getElementById(id);}
 var orb=$("orb");
 function mood(m){orb.className="orb"+(m?(" "+m):"");}
 function say(s){$("status").textContent=s;}
 
-var currentAudio=null;
-function stopAudio(){try{if(currentAudio){currentAudio.onended=null;currentAudio.pause();currentAudio=null;}if("speechSynthesis"in window)speechSynthesis.cancel();}catch(e){}}
+var player=new Audio();
+var SILENT="data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=";
+function unlock(){try{player.src=SILENT;var p=player.play();if(p&&p.catch)p.catch(function(){});}catch(e){}}
+function stopAudio(){try{player.pause();if("speechSynthesis"in window)speechSynthesis.cancel();}catch(e){}}
+
 async function speak(txt,onDone){
- stopAudio();lastAnswer=txt;mood("speaking");say(MSG.speaking);$("sub").textContent="";
+ lastAnswer=txt;mood("speaking");say(MSG.speaking);$("sub").textContent="";
  var done=function(){onDone&&onDone();};
- if(SERVER&&SERVER.indexOf("PASTE")!==0){
-  try{
-   var r=await fetch(SERVER.replace(/\/$/,"")+"/speak",{method:"POST",
-    headers:{"Content-Type":"application/json"},body:JSON.stringify({text:txt,lang:LANG})});
-   if(r.ok){var b=await r.blob();currentAudio=new Audio(URL.createObjectURL(b));
-    currentAudio.onended=done;currentAudio.play().catch(function(){setTimeout(done,600);});return;}
-  }catch(e){}
- }
- try{if(!("speechSynthesis"in window)){setTimeout(done,300);return;}
-  var u=new SpeechSynthesisUtterance(txt);u.lang="hi-IN";u.rate=.9;u.pitch=.92;u.onend=done;speechSynthesis.speak(u);
- }catch(e){setTimeout(done,300);}
+ try{
+  var r=await fetch(SERVER+"/speak",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({text:txt,lang:LANG})});
+  if(r.ok){var b=await r.blob();player.src=URL.createObjectURL(b);player.onended=done;
+   var p=player.play();if(p&&p.catch)p.catch(function(){setTimeout(done,800);});return;}
+ }catch(e){}
+ try{var u=new SpeechSynthesisUtterance(txt);u.lang="hi-IN";u.rate=.9;u.pitch=.92;u.onend=done;speechSynthesis.speak(u);}catch(e){setTimeout(done,300);}
 }
 
 async function turn(userText,isStart){
- if(!SERVER||SERVER.indexOf("PASTE")===0){say(MSG.noUrl);mood("idle");return;}
  if(!isStart){if(!userText||!userText.trim())return;history.push({role:"user",content:userText.trim()});}
  mood("thinking");say(MSG.thinking);$("sub").textContent="";
  try{
-  var r=await fetch(SERVER.replace(/\/$/,"")+"/ask",{method:"POST",
-   headers:{"Content-Type":"application/json"},
+  var r=await fetch(SERVER+"/ask",{method:"POST",headers:{"Content-Type":"application/json"},
    body:JSON.stringify({question:isStart?"__START__":userText,history:isStart?[]:history.slice(-8),name:"",lang:LANG})});
   var d=await r.json();
   if(!r.ok||!d.answer)throw 0;
@@ -116,30 +103,23 @@ async function turn(userText,isStart){
 var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
 var rec=null;
 if(SR){rec=new SR();rec.interimResults=true;rec.maxAlternatives=1;
- rec.onresult=function(e){
-  var txt="";for(var i=0;i<e.results.length;i++)txt+=e.results[i][0].transcript;
+ rec.onresult=function(e){var txt="";for(var i=0;i<e.results.length;i++)txt+=e.results[i][0].transcript;
   $("sub").textContent="“"+txt+"”";
-  if(e.results[e.results.length-1].isFinal){listening=false;mood("");turn(txt,false);}
- };
+  if(e.results[e.results.length-1].isFinal){listening=false;mood("");turn(txt,false);}};
  rec.onerror=function(){listening=false;if(orb.classList.contains("listening")){mood("");say(MSG.tapSpeak);}};
  rec.onend=function(){listening=false;if(orb.classList.contains("listening")){mood("");say(MSG.tapSpeak);}};
 }
 function listen(){
  if(!rec){say(MSG.noMic);mood("");return;}
  if(listening)return;
- stopAudio();
- try{rec.lang="hi-IN";rec.start();listening=true;mood("listening");say(MSG.listening);$("sub").textContent="";}
- catch(e){listening=false;}
+ try{rec.lang="hi-IN";rec.start();listening=true;mood("listening");say(MSG.listening);$("sub").textContent="";}catch(e){listening=false;}
 }
-
-function unlock(){try{var a=new Audio("data:audio/mp3;base64,//uQxAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAACcQCA");a.play().catch(function(){});}catch(e){}}
 
 orb.onclick=function(){
  if(!started){started=true;unlock();$("controls").style.display="flex";turn(null,true);return;}
  if(listening){try{rec.stop();}catch(e){}return;}
  stopAudio();listen();
 };
-
 $("replay").onclick=function(){if(lastAnswer)speak(lastAnswer,function(){});};
 $("restart").onclick=function(){stopAudio();history=[];$("sub").textContent="";turn(null,true);};
 </script>
