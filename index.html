@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -8,174 +8,148 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500&family=EB+Garamond:ital@0;1&family=Rozha+One&family=Tiro+Devanagari+Hindi&display=swap" rel="stylesheet">
 <style>
 :root{--gold:#D9AE5A;--goldb:#F0C674;--saf:#F2933C;--ivory:#F4ECD8;--muted:#B9A98C}
-*{box-sizing:border-box}body{margin:0;min-height:100vh;color:var(--ivory);
-font-family:'EB Garamond',serif;
-background:radial-gradient(900px 600px at 50% -10%,#2a1c4a,rgba(42,28,74,0) 60%),linear-gradient(180deg,#090a1c,#0d0b22 45%,#070512);background-attachment:fixed}
-.wrap{max-width:600px;margin:0 auto;padding:26px 18px calc(30px + env(safe-area-inset-bottom));text-align:center}
-.ring{width:96px;height:96px;margin:0 auto;border-radius:50%;border:1px solid rgba(217,174,90,.5);position:relative;
-box-shadow:inset 0 0 24px rgba(242,147,60,.15),0 0 24px rgba(242,147,60,.1);animation:spin 24s linear infinite}
-.ring:after{content:"";position:absolute;top:50%;left:50%;width:10px;height:10px;margin:-5px;border-radius:50%;background:var(--goldb);box-shadow:0 0 14px var(--goldb)}
-.ring.on{animation-duration:5s}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{min-height:100vh;color:var(--ivory);font-family:'Tiro Devanagari Hindi','EB Garamond',serif;text-align:center;
+background:radial-gradient(900px 600px at 50% -10%,#2a1c4a,rgba(42,28,74,0) 60%),linear-gradient(180deg,#090a1c,#0d0b22 45%,#070512);background-attachment:fixed;
+display:flex;flex-direction:column}
+.wrap{max-width:560px;margin:0 auto;width:100%;padding:40px 22px calc(40px + env(safe-area-inset-bottom));
+flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center}
+h1{font-family:'Rozha One','Tiro Devanagari Hindi',serif;font-size:50px;margin:6px 0 0;color:var(--goldb);text-shadow:0 0 24px rgba(240,198,116,.35)}
+.latin{font-family:'Cinzel',serif;letter-spacing:.4em;font-size:12px;color:var(--gold);margin-left:.4em}
+/* the living orb — the whole interface */
+.orb{width:240px;height:240px;margin:34px auto 14px;border-radius:50%;position:relative;cursor:pointer;
+background:radial-gradient(circle at 50% 45%, rgba(242,147,60,.30), rgba(20,16,43,0) 62%);
+display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent}
+.orb .r{position:absolute;border-radius:50%;border:1px solid rgba(217,174,90,.45)}
+.r1{inset:4px;animation:spin 26s linear infinite}
+.r2{inset:36px;border-color:rgba(217,174,90,.28)!important;animation:spin 18s linear infinite reverse}
+.r3{inset:70px;border-color:rgba(217,174,90,.2)!important;animation:spin 34s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-h1{font-family:'Rozha One','Tiro Devanagari Hindi',serif;font-size:40px;margin:8px 0 0;color:var(--goldb);text-shadow:0 0 22px rgba(240,198,116,.35)}
-.latin{font-family:'Cinzel',serif;letter-spacing:.38em;font-size:11px;color:var(--gold);margin-left:.38em}
-.langs{display:flex;gap:8px;justify-content:center;margin:14px 0 10px;flex-wrap:wrap}
-button{font-family:'EB Garamond',serif;cursor:pointer}
-.lang{font-size:15px;padding:6px 14px;background:rgba(240,198,116,.04);color:var(--muted);border:1px solid rgba(217,174,90,.3);border-radius:2px}
-.lang.sel{color:#090a1c;background:linear-gradient(180deg,var(--goldb),var(--gold));border-color:var(--goldb)}
-#nameIn{width:100%;max-width:280px;margin:2px auto 4px;font-family:'EB Garamond',serif;font-size:15px;color:var(--ivory);
-background:rgba(20,16,43,.55);border:1px solid rgba(217,174,90,.26);border-radius:2px;padding:9px 12px;outline:none;text-align:center}
-#chat{text-align:left;margin:14px 0}
-.bub{padding:13px 15px;border-radius:10px;margin:10px 0;line-height:1.6;animation:fade .5s ease both}
-@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-.you{background:rgba(240,198,116,.10);border:1px solid rgba(217,174,90,.25);margin-left:14%;color:var(--ivory)}
-.you b{font-family:'Cinzel',serif;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:4px}
-.ora{background:rgba(20,16,43,.5);border:1px solid rgba(217,174,90,.18);margin-right:10%}
-.ora b{font-family:'Cinzel',serif;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--saf);display:block;margin-bottom:5px}
-.ora p{font-size:18px;font-style:italic;line-height:1.7;margin:0;color:#f0e7d3}
-.ora .replay{margin-top:8px;font-size:13px;background:none;border:none;color:var(--gold);padding:0}
-#status{min-height:24px;font-style:italic;color:var(--goldb);margin:6px 0 2px}
-#mic{width:84px;height:84px;border-radius:50%;border:none;font-size:34px;color:#090a1c;
-background:linear-gradient(180deg,#F6D089,var(--gold));box-shadow:0 8px 30px rgba(242,147,60,.35);margin:8px auto 4px;display:block}
-#mic.on{animation:pulse 1.1s ease-in-out infinite}
-@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(242,147,60,.5)}50%{box-shadow:0 0 0 16px rgba(242,147,60,0)}}
-.micLabel{font-family:'Cinzel',serif;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
-.askRow{display:flex;gap:8px;margin-top:8px}
-#askIn{flex:1;font-family:'EB Garamond',serif;font-size:16px;color:var(--ivory);background:rgba(20,16,43,.55);
-border:1px solid rgba(217,174,90,.26);border-radius:2px;padding:11px 13px;outline:none}
-#send{font-family:'Cinzel',serif;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#090a1c;
-background:linear-gradient(180deg,#F6D089,var(--gold));border:none;padding:0 18px;border-radius:2px}
-.foot{font-style:italic;font-size:12px;color:#9a8c72aa;margin-top:16px}
+.core{width:24px;height:24px;border-radius:50%;background:var(--goldb);box-shadow:0 0 26px 6px rgba(240,198,116,.6);transition:transform .3s}
+.orb.idle .core{animation:beat 2.6s ease-in-out infinite}
+.orb.speaking .core{animation:beat 1s ease-in-out infinite}
+.orb.thinking .core{animation:beat 1.6s ease-in-out infinite;background:var(--gold)}
+.orb.listening{background:radial-gradient(circle at 50% 45%, rgba(217,174,90,.34), rgba(20,16,43,0) 62%)}
+.orb.listening .core{background:var(--saf);box-shadow:0 0 30px 8px rgba(242,147,60,.7);animation:beat .8s ease-in-out infinite}
+@keyframes beat{0%,100%{transform:scale(1)}50%{transform:scale(1.5)}}
+#status{min-height:28px;font-size:20px;color:var(--goldb);margin:10px 0 2px}
+#sub{min-height:20px;font-size:15px;color:#cbb98f99;margin-bottom:6px}
+.row{display:flex;gap:18px;justify-content:center;margin-top:16px}
+.txtbtn{font-family:'Tiro Devanagari Hindi',serif;font-size:15px;background:none;border:none;
+color:var(--gold);cursor:pointer;border-bottom:1px solid rgba(217,174,90,.4);padding:2px 2px}
+.foot{font-size:12px;color:#9a8c72aa;margin-top:20px}
 </style>
 </head>
 <body>
 <div class="wrap">
 
-  <!-- PASTE YOUR RENDER URL BETWEEN THE QUOTES BELOW -->
-  <script>const SERVER = "https://akashvani-backend-5lqe.onrender.com";</script>
-  <!-- example: const SERVER = "https://akashvani-backend.onrender.com"; -->
+  <!-- अपना Render URL नीचे quotes के बीच लिखें -->
+  <script>const SERVER = "PASTE_YOUR_RENDER_URL_HERE";</script>
+  <!-- उदाहरण: const SERVER = "https://akashvani-backend.onrender.com"; -->
 
-  <div id="ringEl" class="ring"></div>
   <h1>आकाशवाणी</h1>
   <div class="latin">AKASHVANI</div>
 
-  <div class="langs">
-    <button class="lang sel" data-l="hi">हिन्दी</button>
-    <button class="lang" data-l="mr">मराठी</button>
-    <button class="lang" data-l="en">English</button>
+  <div class="orb idle" id="orb">
+    <div class="r r1"></div><div class="r r2"></div><div class="r r3"></div>
+    <div class="core"></div>
   </div>
 
-  <input id="nameIn" placeholder="आपका नाम (वैकल्पिक)">
+  <div id="status">प्रारंभ करने के लिए स्पर्श करें</div>
+  <div id="sub"></div>
 
-  <div id="chat"></div>
-
-  <div id="status"></div>
-  <button id="mic">🎤</button>
-  <div class="micLabel" id="micLabel">बोलकर पूछें</div>
-
-  <div class="askRow">
-    <input id="askIn" placeholder="या यहाँ लिखकर पूछें…">
-    <button id="send">पूछें</button>
+  <div class="row" id="controls" style="display:none">
+    <button class="txtbtn" id="replay">फिर सुनें</button>
+    <button class="txtbtn" id="restart">नया प्रारंभ</button>
   </div>
 
-  <div class="foot" id="foot">चिंतन और प्रकाश हेतु। 🔊 <span id="aiv">AI-निर्मित आवाज़</span></div>
+  <div class="foot">🔊 AI-निर्मित आवाज़</div>
 </div>
 
 <script>
-var LANG="hi", NAME="", history=[];
-var T={
- hi:{namePh:"आपका नाम (वैकल्पिक)",micLabel:"बोलकर पूछें",askPh:"या यहाँ लिखकर पूछें…",send:"पूछें",
-  listening:"सुन रहा हूँ… बोलिए",thinking:"वाणी विचार कर रही है…",you:"आप",ora:"आकाशवाणी",replay:"🔊 फिर सुनें",
-  foot:"चिंतन और प्रकाश हेतु।",aiv:"AI-निर्मित आवाज़",err:"आकाश मौन हो गया। पुनः प्रयास करें।",
-  noMic:"इस ब्राउज़र में आवाज़ उपलब्ध नहीं — कृपया लिखकर पूछें।",noUrl:"पहले फ़ाइल में अपना सर्वर URL भरें।"},
- mr:{namePh:"तुमचे नाव (ऐच्छिक)",micLabel:"बोलून विचारा",askPh:"किंवा इथे लिहून विचारा…",send:"विचारा",
-  listening:"ऐकत आहे… बोला",thinking:"वाणी विचार करत आहे…",you:"तुम्ही",ora:"आकाशवाणी",replay:"🔊 पुन्हा ऐका",
-  foot:"चिंतन आणि प्रकाशासाठी.",aiv:"AI-निर्मित आवाज",err:"आकाश मौन झाले. पुन्हा प्रयत्न करा.",
-  noMic:"या ब्राउझरमध्ये आवाज उपलब्ध नाही — कृपया लिहून विचारा.",noUrl:"आधी फाइलमध्ये तुमचा सर्व्हर URL भरा."},
- en:{namePh:"Your name (optional)",micLabel:"Tap and speak",askPh:"or type your question here…",send:"Ask",
-  listening:"Listening… speak now",thinking:"The Voice is reflecting…",you:"You",ora:"Akashvani",replay:"🔊 Play again",
-  foot:"For reflection and light.",aiv:"AI-generated voice",err:"The ether grew silent. Please try again.",
-  noMic:"Voice input isn't available in this browser — please type instead.",noUrl:"Set your server URL in the file first."}
+var LANG="hi", history=[], lastAnswer="", started=false, listening=false;
+var MSG={
+ idle:"प्रारंभ करने के लिए स्पर्श करें",
+ listening:"सुन रहा हूँ… बोलिए",
+ speaking:"वाणी बोल रही है…",
+ thinking:"विचार कर रहा हूँ…",
+ tapSpeak:"बोलने के लिए वृत्त को स्पर्श करें",
+ err:"क्षमा करें Prasad Sir, संपर्क नहीं हो पाया। वृत्त को पुनः स्पर्श करें।",
+ noUrl:"पहले फ़ाइल में सर्वर URL लिखें।",
+ noMic:"इस ब्राउज़र में आवाज़ उपलब्ध नहीं — कृपया Chrome में खोलें।"
 };
 function $(id){return document.getElementById(id);}
-function setLang(l){LANG=l;var t=T[l];
- document.querySelectorAll(".lang").forEach(function(b){b.classList.toggle("sel",b.dataset.l===l)});
- $("nameIn").placeholder=t.namePh;$("micLabel").textContent=t.micLabel;$("askIn").placeholder=t.askPh;
- $("send").textContent=t.send;$("foot").firstChild.textContent=t.foot+" ";$("aiv").textContent=t.aiv;}
-document.querySelectorAll(".lang").forEach(function(b){b.onclick=function(){setLang(b.dataset.l)}});
-$("nameIn").oninput=function(){NAME=this.value.trim();};
+var orb=$("orb");
+function mood(m){orb.className="orb"+(m?(" "+m):"");}
+function say(s){$("status").textContent=s;}
 
-/* ---- Voice output (OpenAI voice via server, phone voice as backup) ---- */
+/* ---- Voice OUT ---- */
 var currentAudio=null;
-function stopAudio(){try{if(currentAudio){currentAudio.pause();currentAudio=null;}if("speechSynthesis"in window)speechSynthesis.cancel();}catch(e){}}
-async function speak(txt){
- stopAudio();
+function stopAudio(){try{if(currentAudio){currentAudio.onended=null;currentAudio.pause();currentAudio=null;}if("speechSynthesis"in window)speechSynthesis.cancel();}catch(e){}}
+async function speak(txt,onDone){
+ stopAudio();lastAnswer=txt;mood("speaking");say(MSG.speaking);$("sub").textContent="";
+ var done=function(){onDone&&onDone();};
  if(SERVER&&SERVER.indexOf("PASTE")!==0){
   try{
    var r=await fetch(SERVER.replace(/\/$/,"")+"/speak",{method:"POST",
     headers:{"Content-Type":"application/json"},body:JSON.stringify({text:txt,lang:LANG})});
-   if(r.ok){var b=await r.blob();currentAudio=new Audio(URL.createObjectURL(b));currentAudio.play().catch(function(){});return;}
+   if(r.ok){var b=await r.blob();currentAudio=new Audio(URL.createObjectURL(b));
+    currentAudio.onended=done;currentAudio.play().catch(function(){setTimeout(done,600);});return;}
   }catch(e){}
  }
- try{if(!("speechSynthesis"in window))return;var u=new SpeechSynthesisUtterance(txt);
-  u.lang={hi:"hi-IN",mr:"mr-IN",en:"en-IN"}[LANG];u.rate=.9;u.pitch=.92;speechSynthesis.speak(u);}catch(e){}
+ try{if(!("speechSynthesis"in window)){setTimeout(done,300);return;}
+  var u=new SpeechSynthesisUtterance(txt);u.lang="hi-IN";u.rate=.9;u.pitch=.92;u.onend=done;speechSynthesis.speak(u);
+ }catch(e){setTimeout(done,300);}
 }
 
-/* ---- Chat ---- */
-function addBubble(who,text){
- var t=T[LANG],div=document.createElement("div");
- if(who==="you"){div.className="bub you";div.innerHTML="<b>"+t.you+"</b>"+escapeHtml(text);}
- else{div.className="bub ora";div.innerHTML="<b>"+t.ora+"</b><p>"+escapeHtml(text)+"</p>";
-  var rb=document.createElement("button");rb.className="replay";rb.textContent=t.replay;
-  rb.onclick=function(){speak(text);};div.appendChild(rb);}
- $("chat").appendChild(div);div.scrollIntoView({behavior:"smooth",block:"end"});
-}
-function escapeHtml(s){return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
-
-async function ask(q){
- q=(q||"").trim();if(!q)return;
- var t=T[LANG];
- if(!SERVER||SERVER.indexOf("PASTE")===0){$("status").textContent=t.noUrl;return;}
- addBubble("you",q);history.push({role:"user",content:q});
- $("status").textContent=t.thinking;$("ringEl").classList.add("on");
+/* ---- Conversation ---- */
+async function turn(userText,isStart){
+ if(!SERVER||SERVER.indexOf("PASTE")===0){say(MSG.noUrl);mood("idle");return;}
+ if(!isStart){if(!userText||!userText.trim())return;history.push({role:"user",content:userText.trim()});}
+ mood("thinking");say(MSG.thinking);$("sub").textContent="";
  try{
   var r=await fetch(SERVER.replace(/\/$/,"")+"/ask",{method:"POST",
    headers:{"Content-Type":"application/json"},
-   body:JSON.stringify({question:q,history:history.slice(-8),name:NAME,lang:LANG})});
+   body:JSON.stringify({question:isStart?"__START__":userText,history:isStart?[]:history.slice(-8),name:"",lang:LANG})});
   var d=await r.json();
   if(!r.ok||!d.answer)throw 0;
-  $("status").textContent="";$("ringEl").classList.remove("on");
-  addBubble("oracle",d.answer);history.push({role:"assistant",content:d.answer});
-  speak(d.answer);
- }catch(e){$("status").textContent=t.err;$("ringEl").classList.remove("on");}
+  history.push({role:"assistant",content:d.answer});
+  speak(d.answer,function(){listen();});
+ }catch(e){say(MSG.err);mood("idle");}
 }
 
-/* ---- Voice input (speech to text) ---- */
+/* ---- Voice IN ---- */
 var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-var rec=null,listening=false;
+var rec=null;
 if(SR){rec=new SR();rec.interimResults=true;rec.maxAlternatives=1;
  rec.onresult=function(e){
   var txt="";for(var i=0;i<e.results.length;i++)txt+=e.results[i][0].transcript;
-  $("status").textContent="“"+txt+"”";
-  if(e.results[e.results.length-1].isFinal){listening=false;$("mic").classList.remove("on");ask(txt);}
+  $("sub").textContent="“"+txt+"”";
+  if(e.results[e.results.length-1].isFinal){listening=false;mood("");turn(txt,false);}
  };
- rec.onerror=function(){listening=false;$("mic").classList.remove("on");};
- rec.onend=function(){listening=false;$("mic").classList.remove("on");};
+ rec.onerror=function(){listening=false;if(orb.classList.contains("listening")){mood("");say(MSG.tapSpeak);}};
+ rec.onend=function(){listening=false;if(orb.classList.contains("listening")){mood("");say(MSG.tapSpeak);}};
 }
-$("mic").onclick=function(){
- var t=T[LANG];
- if(!rec){$("status").textContent=t.noMic;return;}
- if(listening){try{rec.stop();}catch(e){}return;}
+function listen(){
+ if(!rec){say(MSG.noMic);mood("");return;}
+ if(listening)return;
  stopAudio();
- rec.lang={hi:"hi-IN",mr:"mr-IN",en:"en-IN"}[LANG];
- $("status").textContent=t.listening;$("mic").classList.add("on");listening=true;
- try{rec.start();}catch(e){listening=false;$("mic").classList.remove("on");}
+ try{rec.lang="hi-IN";rec.start();listening=true;mood("listening");say(MSG.listening);$("sub").textContent="";}
+ catch(e){listening=false;}
+}
+
+/* unlock sound on first touch */
+function unlock(){try{var a=new Audio("data:audio/mp3;base64,//uQxAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAACcQCA");a.play().catch(function(){});}catch(e){}}
+
+/* the orb is the whole interface */
+orb.onclick=function(){
+ if(!started){started=true;unlock();$("controls").style.display="flex";turn(null,true);return;}
+ if(listening){try{rec.stop();}catch(e){}return;}
+ stopAudio();listen();
 };
 
-$("send").onclick=function(){var v=$("askIn").value;$("askIn").value="";ask(v);};
-$("askIn").addEventListener("keydown",function(e){if(e.key==="Enter"){e.preventDefault();$("send").click();}});
-
-setLang("hi");
+$("replay").onclick=function(){if(lastAnswer)speak(lastAnswer,function(){});};
+$("restart").onclick=function(){stopAudio();history=[];$("sub").textContent="";turn(null,true);};
 </script>
 </body>
 </html>
