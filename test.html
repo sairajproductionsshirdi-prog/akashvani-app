@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>आकाशवाणी · Test</title>
+<meta name="theme-color" content="#090a1c">
+<style>
+body{margin:0;min-height:100vh;background:#0b0b1e;color:#f4ecd8;font-family:sans-serif;text-align:center;padding:24px}
+h1{color:#f0c674;font-size:30px;margin:10px 0}
+button{font-size:18px;padding:14px 22px;margin:10px;border:none;border-radius:6px;
+background:linear-gradient(180deg,#F6D089,#D9AE5A);color:#0b0b1e;font-weight:bold}
+#dbg{margin-top:20px;text-align:left;background:#000;color:#7CFC7C;font-family:monospace;
+font-size:13px;padding:14px;border-radius:8px;white-space:pre-wrap;word-break:break-all;min-height:160px}
+.tag{color:#f0c674}
+</style>
+</head>
+<body>
+<h1>आकाशवाणी — सर्वर टेस्ट</h1>
+<p class="tag">नीचे का बटन दबाएँ (Tap the button)</p>
+
+<script>const SERVER = "https://akashvani-backend-5lqe.onrender.com";</script>
+
+<button id="test">🔧 सर्वर टेस्ट करें</button>
+<button id="voice">🔊 आवाज़ टेस्ट</button>
+
+<div id="dbg">तैयार…
+</div>
+
+<script>
+function dbg(s){var d=document.getElementById("dbg");d.textContent+=s+"\n";}
+document.getElementById("test").onclick=async function(){
+ dbg("\n--- टेस्ट शुरू ---");
+ dbg("URL: "+SERVER);
+ try{
+  var r1=await fetch(SERVER+"/",{cache:"no-store"});
+  var t1=await r1.text();
+  dbg("1) GET / => "+r1.status+"  «"+t1.slice(0,50)+"»");
+ }catch(e){ dbg("1) GET / FAILED => "+(e.message||e)); dbg(">> सर्वर तक नहीं पहुँच रहा (URL/नेटवर्क)"); return; }
+ try{
+  dbg("2) /ask भेज रहे… (50s लग सकते हैं यदि सर्वर सो रहा हो)");
+  var r2=await fetch(SERVER+"/ask",{method:"POST",headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({question:"__START__",history:[],name:"",lang:"hi"})});
+  var t2=await r2.text();
+  dbg("2) POST /ask => "+r2.status);
+  dbg("   जवाब: "+t2.slice(0,200));
+ }catch(e){ dbg("2) /ask FAILED => "+(e.message||e)); }
+};
+document.getElementById("voice").onclick=async function(){
+ try{
+  dbg("\n/speak टेस्ट…");
+  var r=await fetch(SERVER+"/speak",{method:"POST",headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({text:"ॐ साईं राम",lang:"hi"})});
+  dbg("/speak => "+r.status+" ("+(r.headers.get("content-type")||"")+")");
+  if(r.ok){var b=await r.blob();dbg("audio bytes: "+b.size);new Audio(URL.createObjectURL(b)).play().catch(function(e){dbg("play blocked: "+e);});}
+  else{dbg("जवाब: "+(await r.text()).slice(0,160));}
+ }catch(e){dbg("/speak FAILED => "+(e.message||e));}
+};
+</script>
+</body>
+</html>
