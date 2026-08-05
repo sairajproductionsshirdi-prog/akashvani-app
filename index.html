@@ -66,7 +66,7 @@ display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-col
 var LANG="hi", history=[], lastAnswer="", started=false, listening=false;
 var pendingPlay=false, pendingDone=null, lastUrl="", currentAudio=null;
 var MSG={idle:"प्रारंभ करने के लिए स्पर्श करें",listening:"सुन रहा हूँ… बोलिए",speaking:"वाणी बोल रही है…",
- thinking:"विचार कर रहा हूँ…",tapHear:"🔊 सुनने के लिए वृत्त को स्पर्श करें",tapSpeak:"बोलने के लिए वृत्त को स्पर्श करें",
+ thinking:"विचार कर रहा हूँ…",waking:"सर्वर जाग रहा है, कृपया प्रतीक्षा करें…",tapHear:"🔊 सुनने के लिए वृत्त को स्पर्श करें",tapSpeak:"बोलने के लिए वृत्त को स्पर्श करें",
  err:"क्षमा करें Prasad Sir, संपर्क नहीं हो पाया। वृत्त को पुनः स्पर्श करें।",noMic:"आवाज़ उपलब्ध नहीं — Chrome में खोलें।"};
 function $(id){return document.getElementById(id);}
 var orb=$("orb");
@@ -93,17 +93,23 @@ function playNow(){
  if(p&&p.catch)p.catch(function(){pendingPlay=true;mood("ready");say(MSG.tapHear);});
 }
 
+function wait(ms){return new Promise(function(res){setTimeout(res,ms);});}
 async function turn(userText,isStart){
  if(!isStart){if(!userText||!userText.trim())return;history.push({role:"user",content:userText.trim()});}
  mood("thinking");say(MSG.thinking);$("sub").textContent="";
- try{
-  var r=await fetch(SERVER+"/ask",{method:"POST",headers:{"Content-Type":"application/json"},
-   body:JSON.stringify({question:isStart?"__START__":userText,history:isStart?[]:history.slice(-8),name:"",lang:LANG})});
-  var d=await r.json();
-  if(!r.ok||!d.answer)throw 0;
-  history.push({role:"assistant",content:d.answer});
-  speak(d.answer,function(){listen();});
- }catch(e){say(MSG.err);mood("idle");}
+ var payload={question:isStart?"__START__":userText,history:isStart?[]:history.slice(-8),name:"",lang:LANG};
+ var d=null;
+ for(var i=0;i<7 && !d;i++){
+  try{
+   var r=await fetch(SERVER+"/ask",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+   if(r.ok){var j=await r.json(); if(j&&j.answer){d=j;break;}}
+  }catch(e){}
+  say(MSG.waking);
+  await wait(9000);
+ }
+ if(!d){say(MSG.err);mood("idle");return;}
+ history.push({role:"assistant",content:d.answer});
+ speak(d.answer,function(){listen();});
 }
 
 var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
