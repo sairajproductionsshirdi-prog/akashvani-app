@@ -25,7 +25,7 @@ display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-col
 @keyframes spin{to{transform:rotate(360deg)}}
 .core{width:24px;height:24px;border-radius:50%;background:var(--goldb);box-shadow:0 0 26px 6px rgba(240,198,116,.6);transition:transform .3s}
 .orb.idle .core,.orb.ready .core{animation:beat 1.4s ease-in-out infinite}
-.orb.ready{background:radial-gradient(circle at 50% 45%, rgba(240,198,116,.4), rgba(20,16,43,0) 62%)}
+.orb.ready{background:radial-gradient(circle at 50% 45%, rgba(240,198,116,.42), rgba(20,16,43,0) 62%)}
 .orb.speaking .core{animation:beat 1s ease-in-out infinite}
 .orb.thinking .core{animation:beat 1.6s ease-in-out infinite;background:var(--gold)}
 .orb.listening{background:radial-gradient(circle at 50% 45%, rgba(217,174,90,.34), rgba(20,16,43,0) 62%)}
@@ -63,7 +63,8 @@ display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-col
 </div>
 
 <script>
-var LANG="hi", history=[], lastAnswer="", started=false, listening=false, pendingPlay=false;
+var LANG="hi", history=[], lastAnswer="", started=false, listening=false;
+var pendingPlay=false, pendingDone=null, lastUrl="", currentAudio=null;
 var MSG={idle:"प्रारंभ करने के लिए स्पर्श करें",listening:"सुन रहा हूँ… बोलिए",speaking:"वाणी बोल रही है…",
  thinking:"विचार कर रहा हूँ…",tapHear:"🔊 सुनने के लिए वृत्त को स्पर्श करें",tapSpeak:"बोलने के लिए वृत्त को स्पर्श करें",
  err:"क्षमा करें Prasad Sir, संपर्क नहीं हो पाया। वृत्त को पुनः स्पर्श करें।",noMic:"आवाज़ उपलब्ध नहीं — Chrome में खोलें।"};
@@ -71,22 +72,25 @@ function $(id){return document.getElementById(id);}
 var orb=$("orb");
 function mood(m){orb.className="orb"+(m?(" "+m):"");}
 function say(s){$("status").textContent=s;}
-
-var player=new Audio();
-var SILENT="data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=";
-function unlock(){try{player.src=SILENT;var p=player.play();if(p&&p.catch)p.catch(function(){});}catch(e){}}
-function stopAudio(){try{player.pause();if("speechSynthesis"in window)speechSynthesis.cancel();}catch(e){}}
+function stopAudio(){try{if(currentAudio){currentAudio.pause();currentAudio=null;}if("speechSynthesis"in window)speechSynthesis.cancel();}catch(e){}}
 
 async function speak(txt,onDone){
- lastAnswer=txt;$("sub").textContent="";pendingPlay=false;
- var done=function(){onDone&&onDone();};
+ lastAnswer=txt;pendingPlay=false;pendingDone=onDone;$("sub").textContent="";
  try{
   say(MSG.thinking);
   var r=await fetch(SERVER+"/speak",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({text:txt,lang:LANG})});
-  if(r.ok){var b=await r.blob();player.src=URL.createObjectURL(b);player.onended=done;
-   pendingPlay=true;mood("ready");say(MSG.tapHear);return;}
+  if(r.ok){var b=await r.blob();try{if(lastUrl)URL.revokeObjectURL(lastUrl);}catch(e){}
+   lastUrl=URL.createObjectURL(b);pendingPlay=true;mood("ready");say(MSG.tapHear);return;}
  }catch(e){}
- try{mood("speaking");say(MSG.speaking);var u=new SpeechSynthesisUtterance(txt);u.lang="hi-IN";u.rate=.9;u.pitch=.92;u.onend=done;speechSynthesis.speak(u);}catch(e){setTimeout(done,300);}
+ try{mood("speaking");say(MSG.speaking);var u=new SpeechSynthesisUtterance(txt);u.lang="hi-IN";u.rate=.9;u.pitch=.92;u.onend=function(){onDone&&onDone();};speechSynthesis.speak(u);}catch(e){setTimeout(function(){onDone&&onDone();},300);}
+}
+
+function playNow(){
+ stopAudio();mood("speaking");say(MSG.speaking);
+ currentAudio=new Audio(lastUrl);
+ currentAudio.onended=function(){if(pendingDone)pendingDone();};
+ var p=currentAudio.play();
+ if(p&&p.catch)p.catch(function(){pendingPlay=true;mood("ready");say(MSG.tapHear);});
 }
 
 async function turn(userText,isStart){
@@ -118,12 +122,12 @@ function listen(){
 }
 
 orb.onclick=function(){
- if(!started){started=true;unlock();$("controls").style.display="flex";turn(null,true);return;}
- if(pendingPlay){pendingPlay=false;mood("speaking");say(MSG.speaking);var p=player.play();if(p&&p.catch)p.catch(function(){});return;}
+ if(!started){started=true;$("controls").style.display="flex";turn(null,true);return;}
+ if(pendingPlay){pendingPlay=false;playNow();return;}
  if(listening){try{rec.stop();}catch(e){}return;}
  stopAudio();listen();
 };
-$("replay").onclick=function(){if(player.src&&player.src.indexOf("wav")<0){mood("speaking");say(MSG.speaking);player.play().catch(function(){});}else if(lastAnswer){speak(lastAnswer,function(){listen();});}};
+$("replay").onclick=function(){if(lastUrl){pendingDone=function(){listen();};playNow();}};
 $("restart").onclick=function(){stopAudio();history=[];$("sub").textContent="";turn(null,true);};
 </script>
 </body>
